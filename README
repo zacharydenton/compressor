@@ -1,0 +1,1 @@
+run the script in your music directory. by default, it compresses all FLACs to V0 MP3s (using LAME) and copies all MP3s without transcoding them.

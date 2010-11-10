@@ -2,12 +2,19 @@
 # converts all .flac files to .mp3 and copies them to the
 # OUT directory; copies all .mp3 files to the OUT directory.
 
-OUT="../Compressed_Music"
+if [ "$#" -ne 2 ]
+then
+	echo "usage: $0 MUSIC_DIR OUTPUT_DIR"
+	exit 1
+fi
+
+IN=$1
+OUT=$2
 LAMEOPTS="-V0"
 
 # first, find all .mp3s and copy them to the OUT dir
 # (if they're not already there, of course)
-find . -iname "*.mp3" | while read mp3;
+find "$IN" -iname "*.mp3" | while read mp3;
 do
         if [ ! -e "$OUT/$mp3" ]
         then
@@ -18,7 +25,7 @@ done
 # now, find all .flacs; decompress them to .wav; convert
 # them to .mp3 using LAME; restore their ID3 tags; move 
 # them to the OUT dir; and discard the .wav afterwards
-find . -iname "*.flac" | while read flac;
+find "$IN" -iname "*.flac" | while read flac;
 do
         dir=`dirname "$flac"`
         file=`basename "$flac"`

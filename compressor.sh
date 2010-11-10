@@ -27,10 +27,10 @@ fi
 # unless they are already there
 find "$IN" -iname "*.mp3" | sed 's/$IN//' | while read mp3; # we only want the unique part
 do
-        if [ ! -e "$OUT/$mp3" ]
-        then
-                cp --parents "$mp3" "$OUT"
-        fi
+	if [ ! -e "$OUT/$mp3" ]
+	then
+		cp --parents "$mp3" "$OUT"
+	fi
 done
 
 # now, find all .flacs; decompress them to .wav; convert
@@ -38,27 +38,27 @@ done
 # them to the OUT dir; and discard the .wav afterwards
 find "$IN" -iname "*.flac" | sed 's/$IN//' | while read flac; # we only want the unique part
 do
-        dir=`dirname "$flac"`
-        file=`basename "$flac"`
-        base=${file%.*} # strip the extension
-        if [ ! -d "$OUT/$dir" ]
-        then
-                mkdir -p "$OUT/$dir"
-        fi
-        if [ ! -e "$OUT/$dir/$base.mp3" ]
-        then 
-				# retrieve ID3 tags
-				ARTIST=`metaflac "$a" --show-tag=ARTIST | sed s/.*=//g`
-				TITLE=`metaflac "$a" --show-tag=TITLE | sed s/.*=//g`
-				ALBUM=`metaflac "$a" --show-tag=ALBUM | sed s/.*=//g`
-				GENRE=`metaflac "$a" --show-tag=GENRE | sed s/.*=//g`
-				TRACKNUMBER=`metaflac "$a" --show-tag=TRACKNUMBER | sed s/.*=//g`
-				DATE=`metaflac "$a" --show-tag=DATE | sed s/.*=//g`
+	dir=`dirname "$flac"`
+	file=`basename "$flac"`
+	base=${file%.*} # strip the extension
+	if [ ! -d "$OUT/$dir" ]
+	then
+		mkdir -p "$OUT/$dir"
+	fi
+	if [ ! -e "$OUT/$dir/$base.mp3" ]
+	then 
+		# retrieve ID3 tags
+		ARTIST=`metaflac "$a" --show-tag=ARTIST | sed s/.*=//g`
+		TITLE=`metaflac "$a" --show-tag=TITLE | sed s/.*=//g`
+		ALBUM=`metaflac "$a" --show-tag=ALBUM | sed s/.*=//g`
+		GENRE=`metaflac "$a" --show-tag=GENRE | sed s/.*=//g`
+		TRACKNUMBER=`metaflac "$a" --show-tag=TRACKNUMBER | sed s/.*=//g`
+		DATE=`metaflac "$a" --show-tag=DATE | sed s/.*=//g`
 
-                # convert to MP3, preserving ID3 tags
-                flac -c -dF "$flac" | lame $LAMEOPTS \
-					--add-id3v2 --pad-id3v2 --ignore-tag-errors --tt "$TITLE" --tn "${TRACKNUMBER:-0}" --ta "$ARTIST" --tl "$ALBUM" --ty "$DATE" --tg "${GENRE:-12}" \
-					- "$OUT/$dir/$base.mp3"
-        fi
+		# convert to MP3, preserving ID3 tags
+		flac -c -dF "$flac" | lame $LAMEOPTS \
+			--add-id3v2 --pad-id3v2 --ignore-tag-errors --tt "$TITLE" --tn "${TRACKNUMBER:-0}" --ta "$ARTIST" --tl "$ALBUM" --ty "$DATE" --tg "${GENRE:-12}" \
+			- "$OUT/$dir/$base.mp3"
+	fi
 done
 

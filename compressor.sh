@@ -25,7 +25,7 @@ fi
 
 # first, find all .mp3s and copy them to the OUT dir
 # unless they are already there
-find "$IN" -iname "*.mp3" | while read mp3;
+find "$IN" -iname "*.mp3" | sed 's/$IN//' | while read mp3; # we only want the unique part
 do
         if [ ! -e "$OUT/$mp3" ]
         then
@@ -36,7 +36,7 @@ done
 # now, find all .flacs; decompress them to .wav; convert
 # them to .mp3 using LAME; restore their ID3 tags; move 
 # them to the OUT dir; and discard the .wav afterwards
-find "$IN" -iname "*.flac" | while read flac;
+find "$IN" -iname "*.flac" | sed 's/$IN//' | while read flac; # we only want the unique part
 do
         dir=`dirname "$flac"`
         file=`basename "$flac"`

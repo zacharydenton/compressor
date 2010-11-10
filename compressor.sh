@@ -2,7 +2,7 @@
 # converts all .flac files to .mp3 and copies them to the
 # OUT directory; copies all .mp3 files to the OUT directory.
 
-LAMEOPTS="-V0"
+LAMEOPTS="-V0 --quiet"
 
 if [ "$#" -ne 2 ]
 then
@@ -29,7 +29,8 @@ find "$IN" -iname "*.mp3" | sed 's/$IN//' | while read mp3; # we only want the u
 do
 	if [ ! -e "$OUT/$mp3" ]
 	then
-		cp --parents "$mp3" "$OUT"
+		echo "copying $IN/$mp3 to $OUT/$mp3"
+		cp --parents "$IN/$mp3" "$OUT"
 	fi
 done
 
@@ -56,7 +57,8 @@ do
 		DATE=`metaflac "$a" --show-tag=DATE | sed s/.*=//g`
 
 		# convert to MP3, preserving ID3 tags
-		flac -c -dF "$flac" | lame $LAMEOPTS \
+		echo "encoding $IN/$flac to $OUT/$dir/$base.mp3"
+		flac -c -dF "$IN/$flac" | lame $LAMEOPTS \
 			--add-id3v2 --pad-id3v2 --ignore-tag-errors --tt "$TITLE" --tn "${TRACKNUMBER:-0}" --ta "$ARTIST" --tl "$ALBUM" --ty "$DATE" --tg "${GENRE:-12}" \
 			- "$OUT/$dir/$base.mp3"
 	fi

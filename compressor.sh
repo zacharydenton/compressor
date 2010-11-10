@@ -3,7 +3,7 @@
 # OUT directory; copies all .mp3 files to the OUT directory.
 
 OUT="../Compressed_Music"
-LAMEOPTS="--vbr-new -V0"
+LAMEOPTS="-V0"
 
 # first, find all .mp3s and copy them to the OUT dir
 # (if they're not already there, of course)
@@ -37,14 +37,10 @@ do
 				TRACKNUMBER=`metaflac "$a" --show-tag=TRACKNUMBER | sed s/.*=//g`
 				DATE=`metaflac "$a" --show-tag=DATE | sed s/.*=//g`
 
-                # decode to .wav, since lame doesn't speak .flac
-                flac -dF "$flac" # decode regardless of errors
-                # convert the .wav to .mp3; discard the .wav afterwards
-                lame $LAMEOPTS "$dir/$base.wav" "$OUT/$dir/$base.mp3"
-                rm "$dir/$base.wav"
-
-				# restore ID3 tags
-				id3 -t $TITLE" -T "${TRACKNUMBER:-0}" -a "$ARTIST" -A "$ALBUM" -y "$DATE" -g "${GENRE:-12}" "$OUT/$dir/$base.mp3"
+                # convert to MP3, preserving ID3 tags
+                flac -c -dF "$flac" | lame $LAMEOPTS \
+					--add-id3v2 --pad-id3v2 --ignore-tag-errors --tt "$TITLE" --tn "${TRACKNUMBER:-0}" --ta "$ARTIST" --tl "$ALBUM" --ty "$DATE" --tg "${GENRE:-12}" \
+					- "$OUT/$dir/$base.mp3"
         fi
 done
 

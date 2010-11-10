@@ -2,6 +2,8 @@
 # converts all .flac files to .mp3 and copies them to the
 # OUT directory; copies all .mp3 files to the OUT directory.
 
+LAMEOPTS="-V0"
+
 if [ "$#" -ne 2 ]
 then
 	echo "usage: $0 MUSIC_DIR OUTPUT_DIR"
@@ -9,11 +11,20 @@ then
 fi
 
 IN=$1
+if [ ! -d "$IN" ]
+then
+	echo "$IN is not a directory"
+	exit 1
+fi
+
 OUT=$2
-LAMEOPTS="-V0"
+if [ ~ -d "$OUT" ]
+then
+	mkdir "$OUT"
+fi
 
 # first, find all .mp3s and copy them to the OUT dir
-# (if they're not already there, of course)
+# unless they are already there
 find "$IN" -iname "*.mp3" | while read mp3;
 do
         if [ ! -e "$OUT/$mp3" ]

@@ -27,11 +27,16 @@ fi
 # unless they are already there
 find "$IN" -iname "*.mp3" | while read mp3; 
 do
-	OF=`echo "$mp3" | sed s,"$IN","$OUT",g`
+	OF=`echo "$mp3" | sed s,"$IN","$OUT\/",g`
+	dir=`dirname "$OF"`
+	if [ ! -d "$dir" ]
+	then
+		mkdir -p "$dir"
+	fi
 	if [ ! -e "$OF" ]
 	then
 		echo "copying $mp3 to $OF"
-		cp --parents "$mp3" "$OF"
+		cp "$mp3" "$OF"
 	fi
 done
 

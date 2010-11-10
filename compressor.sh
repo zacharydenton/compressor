@@ -18,7 +18,7 @@ then
 fi
 
 OUT=$2
-if [ ~ -d "$OUT" ]
+if [ ! -d "$OUT" ]
 then
 	mkdir "$OUT"
 fi
@@ -44,7 +44,7 @@ done
 # unless they have already been converted
 find "$IN" -iname "*.flac" | while read flac; 
 do
-	OF=`echo "$flac" | sed s/\.flac/\.mp3/g | sed s,"$IN","$OUT",g`
+	OF=`echo "$flac" | sed s/\.flac/\.mp3/g | sed s,"$IN","$OUT\/",g`
 	dir=`dirname "$OF"`
 	if [ ! -d "$dir" ]
 	then

@@ -62,7 +62,7 @@ do
 
 		# convert to MP3, preserving ID3 tags
 		echo "encoding $flac to $OF"
-		flac -c -dF "$flac" | lame $LAMEOPTS \
+		flac -c -dF --silent "$flac" | lame $LAMEOPTS \
 			--add-id3v2 --pad-id3v2 --ignore-tag-errors --tt "$TITLE" --tn "${TRACKNUMBER:-0}" --ta "$ARTIST" --tl "$ALBUM" --ty "$DATE" --tg "${GENRE:-12}" \
 			- "$OF"
 	fi
